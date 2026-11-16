@@ -9,7 +9,7 @@ const {
   remplacerTache,
   modifierTache,
   supprimerTache,
-} = require('../controllers/taskController');
+} = require('../controllers/task.controller');
 
 const router = express.Router();
 
