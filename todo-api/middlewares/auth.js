@@ -24,7 +24,7 @@ const auth = asyncHandler(async (req, res, next) => {
     return res.status(401).json({ erreur: 'Utilisateur introuvable' });
   }
 
-  req.user = user;   // les routes suivantes savent qui est connecté
+  req.user = user;   
   next();
 });
 
