@@ -1,13 +1,14 @@
 require('dotenv').config();
 
 const express = require('express');
+const helmet = require('helmet');
+const cors = require('cors');
 const connectDB = require('./config/db');
 const requestLogger = require('./middlewares/requestLogger');
 const notFound = require('./middlewares/notFound');
 const errorHandler = require('./middlewares/errorHandler');
 const authRouter = require('./routes/auth');
 const tasksRouter = require('./routes/tasks');
-
 
 if (!process.env.MONGODB_URI) {
   console.error('Variable manquante : MONGODB_URI');
@@ -22,14 +23,34 @@ if (!process.env.JWT_SECRET) {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const originesAutorisees = (process.env.CORS_ORIGINS || '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+app.use(helmet());
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || originesAutorisees.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error('Origine non autorisée par CORS'));
+    },
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
 app.use(requestLogger);
 app.use(express.json());
 
+app.get('/health', (req, res) => {
+  res.json({ statut: 'ok' });
+});
 
 app.use('/auth', authRouter);
 app.use('/tasks', tasksRouter);
-
 
 app.use(notFound);
 app.use(errorHandler);

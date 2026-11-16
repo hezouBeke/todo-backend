@@ -19,9 +19,8 @@ const register = asyncHandler(async (req, res) => {
   const { nom, email, motDePasse } = req.body || {};
   const user = await User.create({ nom, email, motDePasse });
 
-  res.status(201).json({ user: reponseUtilisateur(user), token: genererToken(user) });
+  res.status(201).json({ user: reponseUtilisateur(user) });
 });
-
 // POST /auth/login
 const login = asyncHandler(async (req, res) => {
   const { email, motDePasse } = req.body || {};
