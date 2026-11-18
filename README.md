@@ -217,6 +217,3 @@ L'importer dans Postman, puis définir la variable `baseUrl`.
 - Pas encore de tests automatisés ni de limitation du nombre de requêtes
 - Prochaines étapes : Helmet et CORS, tests Jest, déploiement sur Render
 
-## Auteur
-
-Ton Nom, [LinkedIn](lien-vers-ton-profil)
