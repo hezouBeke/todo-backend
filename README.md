@@ -207,11 +207,7 @@ Une tâche appartenant à un autre utilisateur renvoie 404, comme si elle n'exis
 - Isolation des données : chaque requête est filtrée par utilisateur
 - Seuls les champs attendus sont pris en compte (liste blanche)
 
-## Tests
-
-Une collection Postman est disponible dans `docs/`.
-L'importer dans Postman, puis définir la variable `baseUrl`.
-
+=
 ## Limites et suite
 
 - Pas encore de tests automatisés ni de limitation du nombre de requêtes
