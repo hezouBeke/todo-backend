@@ -47,24 +47,19 @@ app.use(
 app.use(requestLogger);
 app.use(express.json());
 
-app.get('/', requireYeriaUser, (req, res, next) => {
-  try {
-    const form = yeriaApp
-      .createFormView('user-registration', 'User Registration')
-      .setIntro('Please fill in all required fields')
-      .addTextField('firstName', 'First Name', true, 50)
-      .addTextField('lastName', 'Last Name', true, 50)
-      .addEmailField('email', 'Email Address', true)
-      .addPhoneField('phone', 'Phone Number', false)
-      .submitButton('Create Account', 'POST');
-
-    // Adaptez selon la méthode de rendu de YeriaUI / FormView dans votre doc :
-    // ex. YeriaUI.render(form) ou form.render() / form.toHTML() / form.toJSON()
-    const output = typeof YeriaUI?.render === 'function' ? YeriaUI.render(form) : form;
-    return res.send(output);
-  } catch (err) {
-    return next(err);
-  }
+app.get('/', requireYeriaUser, (req, res) => {
+  const form = YeriaUI.createFormView('user-registration', 'User Registration')
+    .setIntro('Please fill in all required fields')
+    .addTextField('firstName', 'First Name', true, 50)
+    .addTextField('lastName', 'Last Name', true, 50)
+    .addEmailField('email', 'Email Address', true)
+    .addPhoneField('phone', 'Phone Number', false)
+    .setFieldValue('firstName', '')
+    .setFieldValue('lastName', '')
+    .setFieldValue('email', '')
+    .setFieldValue('phone', '')
+    .submitButton('Create Account', 'POST');
+  res.json(yeriaApp.serve(form));
 });
 
 app.use('/auth', authRouter);

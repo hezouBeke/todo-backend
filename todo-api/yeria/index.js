@@ -18,11 +18,13 @@ async function requireYeriaUser(req, res, next) {
   try {
     req.yeriaUser = await yeriaApp.verifyUserToken(bearer, process.env.YERIA_SERVICE_ID);
     next();
-  } catch (err) {
+   } catch (err) {
+    console.error('Erreur Yeria :', err.name, '-', err.message);
+
     if (err instanceof ViewExpiredError) return res.status(401).json({ error: 'token expired' });
     if (err instanceof SignatureVerificationError) return res.status(401).json({ error: 'invalid token' });
     if (err instanceof YeriaPlatformUnreachableError) return res.status(503).json({ error: 'yeria unreachable' });
-    return res.status(500).json({ error: 'auth error' });
+    return res.status(500).json({ error: `auth error: ${err.message}` });
   }
 }
 
