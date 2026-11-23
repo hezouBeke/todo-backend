@@ -10,6 +10,8 @@ const errorHandler = require('./middlewares/errorHandler');
 const authRouter = require('./routes/auth');
 const tasksRouter = require('./routes/tasks');
 const { yeriaApp, YeriaUI, requireYeriaUser } = require('./yeria');
+const yeriaRoute = require('./yeria/yeria.route');
+
 if (!process.env.MONGODB_URI) {
   console.error('Variable manquante : MONGODB_URI');
   process.exit(1);
@@ -45,19 +47,29 @@ app.use(
 app.use(requestLogger);
 app.use(express.json());
 
-app.get('/', requireYeriaUser, (req, res) => {
-  const form = yeriaApp
-    .createFormView('user-registration', 'User Registration')
-    .setIntro('Please fill in all required fields')
-    .addTextField('firstName', 'First Name', true, 50)
-    .addTextField('lastName', 'Last Name', true, 50)
-    .addEmailField('email', 'Email Address', true)
-    .addPhoneField('phone', 'Phone Number', false)
-    .submitButton('Create Account', 'POST');
+app.get('/', requireYeriaUser, (req, res, next) => {
+  try {
+    const form = yeriaApp
+      .createFormView('user-registration', 'User Registration')
+      .setIntro('Please fill in all required fields')
+      .addTextField('firstName', 'First Name', true, 50)
+      .addTextField('lastName', 'Last Name', true, 50)
+      .addEmailField('email', 'Email Address', true)
+      .addPhoneField('phone', 'Phone Number', false)
+      .submitButton('Create Account', 'POST');
+
+    // Adaptez selon la méthode de rendu de YeriaUI / FormView dans votre doc :
+    // ex. YeriaUI.render(form) ou form.render() / form.toHTML() / form.toJSON()
+    const output = typeof YeriaUI?.render === 'function' ? YeriaUI.render(form) : form;
+    return res.send(output);
+  } catch (err) {
+    return next(err);
+  }
 });
+
 app.use('/auth', authRouter);
 app.use('/tasks', tasksRouter);
-app.use('/secure', require('./yeria/yeria.route'));
+app.use('/secure', yeriaRoute);
 
 app.use(notFound);
 app.use(errorHandler);
