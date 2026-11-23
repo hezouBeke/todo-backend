@@ -46,9 +46,14 @@ app.use(requestLogger);
 app.use(express.json());
 
 app.get('/', requireYeriaUser, (req, res) => {
-  const view = YeriaUI.createReaderView('hello', 'Hello world')
-    .addParagraph('Hello world !');
-  res.json(yeriaApp.serve(view));
+  const form = yeriaApp
+    .createFormView('user-registration', 'User Registration')
+    .setIntro('Please fill in all required fields')
+    .addTextField('firstName', 'First Name', true, 50)
+    .addTextField('lastName', 'Last Name', true, 50)
+    .addEmailField('email', 'Email Address', true)
+    .addPhoneField('phone', 'Phone Number', false)
+    .submitButton('Create Account', 'POST');
 });
 app.use('/auth', authRouter);
 app.use('/tasks', tasksRouter);
