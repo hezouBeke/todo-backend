@@ -51,7 +51,7 @@ app.get('/health', (req, res) => {
 
 app.use('/auth', authRouter);
 app.use('/tasks', tasksRouter);
-app.use('/secure', require('./yeria/routes'));
+app.use('/secure', require('./yeria/yeria.route'));
 
 app.use(notFound);
 app.use(errorHandler);
