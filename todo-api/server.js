@@ -9,7 +9,7 @@ const notFound = require('./middlewares/notFound');
 const errorHandler = require('./middlewares/errorHandler');
 const authRouter = require('./routes/auth');
 const tasksRouter = require('./routes/tasks');
-
+const { yeriaApp, YeriaUI, requireYeriaUser } = require('./yeria');
 if (!process.env.MONGODB_URI) {
   console.error('Variable manquante : MONGODB_URI');
   process.exit(1);
@@ -45,10 +45,11 @@ app.use(
 app.use(requestLogger);
 app.use(express.json());
 
-app.get('/health', (req, res) => {
-  res.json({ statut: 'ok' });
+app.get('/', requireYeriaUser, (req, res) => {
+  const view = YeriaUI.createReaderView('hello', 'Hello world')
+    .addParagraph('Hello world !');
+  res.json(yeriaApp.serve(view));
 });
-
 app.use('/auth', authRouter);
 app.use('/tasks', tasksRouter);
 app.use('/secure', require('./yeria/yeria.route'));
